@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0b">
+<title>HANIL Pay</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root{--bg:#0a0a0b;--surface:rgba(255,255,255,.06);--line:rgba(255,255,255,.1);--text:#f4f1ea;--muted:#8c887e;--gold:#c9a24b;--green:#43d17a;--red:#ff6b6b;--blue:#5aa7ff;--cyan:#43d1d1}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:'Manrope',-apple-system,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+  .screen{display:none;min-height:100vh}
+  .screen.on{display:flex;flex-direction:column}
+
+  /* 로그인 */
+  .auth{padding:60px 28px 40px;max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;width:100%}
+  .logo-wrap{text-align:center;margin-bottom:38px}
+  /* 세로로 긴 라틴 십자가 (직접 그림) */
+  .cross{position:relative;width:42px;height:60px;margin:0 auto 12px}
+  .cross::before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:13px;height:100%;background:#fff;border-radius:3px}
+  .cross::after{content:"";position:absolute;left:0;top:17px;width:100%;height:13px;background:#fff;border-radius:3px}
+  .brand{font-size:30px;font-weight:800;letter-spacing:-.02em}
+  .brand b{color:var(--gold)}
+  .sub{font-size:14px;color:var(--muted);margin-top:4px}
+  .tabs{display:flex;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:24px}
+  .tab{flex:1;padding:12px;text-align:center;border-radius:9px;cursor:pointer;font-size:15px;font-weight:600;color:var(--muted)}
+  .tab.on{background:rgba(255,255,255,.12);color:var(--text)}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  .field input,.field select{width:100%;padding:14px 16px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:12px;color:var(--text);font-family:'Manrope';font-size:15px}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--gold)}
+  .field select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%238c887e' d='M6 8L0 0h12z'/></svg>");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+  .chip{padding:8px 14px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid var(--line);font-size:13px;cursor:pointer;color:var(--text)}
+  .chip.on{background:var(--gold);color:#1a1407;border-color:var(--gold);font-weight:700}
+  .helper{font-size:12px;color:var(--muted);line-height:1.5;margin-top:8px}
+  .forgot{text-align:right;font-size:12px;color:var(--muted);margin-top:6px;cursor:pointer}
+  .go{width:100%;padding:15px;margin-top:18px;background:#fff;color:#000;border:none;border-radius:13px;font-family:'Manrope';font-weight:800;font-size:16px;cursor:pointer}
+  .go:disabled{opacity:.5;cursor:default}
+  .msg{margin-top:14px;font-size:14px;text-align:center;min-height:18px}
+  .msg.err{color:var(--red)} .msg.ok{color:var(--green)}
+  .legal{font-size:11px;color:var(--muted);text-align:center;margin-top:auto;padding-top:40px;line-height:1.6}
+  .legal a{color:var(--muted);text-decoration:underline}
+
+  /* 지갑 */
+  .wallet{max-width:480px;margin:0 auto;width:100%;min-height:100vh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+  .wheader{display:flex;align-items:center;justify-content:space-between;padding:20px 26px 0}
+  .wbrand .b1{font-size:16px;font-weight:700}
+  .wbrand .b2{font-size:12px;color:var(--muted);margin-top:2px}
+  .wicons{display:flex;gap:14px;align-items:center}
+  .wicons button{background:none;border:none;color:#fff;cursor:pointer;font-size:18px;padding:6px}
+  .wicons button.logout{color:var(--muted)}
+  .balance{text-align:center;margin:30px 0 26px}
+  .balance .num{font-family:'Space Mono',monospace;font-size:52px;font-weight:700;letter-spacing:-.02em}
+  .balance .won{font-size:30px;color:var(--muted);margin-left:6px}
+  .pending{text-align:center;font-size:13px;color:var(--gold);margin-top:-12px;margin-bottom:14px}
+  .actions{padding:0 26px 24px;display:flex;flex-direction:column;gap:10px}
+  .btn-pay{padding:15px;background:#fff;color:#000;border:none;border-radius:14px;font-family:'Manrope';font-weight:800;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn-pay:disabled{background:#555;color:#000;cursor:default}
+  .btn-charge{padding:13px;background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:14px;font-family:'Manrope';font-weight:700;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+  .history-wrap{padding:0 26px}
+  .history-title{font-size:18px;font-weight:800;margin-bottom:10px}
+  .history{height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+  .history::-webkit-scrollbar{width:0}
+  .item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,.07);border-radius:14px}
+  .item .ic{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;color:var(--cyan)}
+  .item .ic.in{color:var(--blue)}
+  .item .info{flex:1;min-width:0}
+  .item .name{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item .date{font-size:12px;color:var(--muted);margin-top:2px}
+  .item .amt{font-weight:700;font-size:15px;white-space:nowrap}
+  .item .amt.in{color:var(--blue)} .item .amt.out{color:var(--red)}
+  .empty{text-align:center;color:var(--muted);font-size:14px;padding:30px}
+  .footer{margin-top:auto;padding:20px 26px;text-align:center}
+  .footer .links{display:flex;justify-content:center;gap:30px;margin-bottom:10px}
+  .footer .links a{display:flex;flex-direction:column;align-items:center;gap:3px;color:#fff;text-decoration:none;font-size:11px}
+  .footer .links a .ico{font-size:20px}
+  .footer .links a .ico-img{width:24px;height:24px;border-radius:6px;display:block;margin-bottom:2px}
+  .footer .links a.yt .ico{color:var(--red)}
+  .footer .addr{font-size:11px;color:var(--muted);line-height:1.6}
+
+  /* 차단 */
+  .blocked{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;gap:18px}
+  .blocked .ic{font-size:56px;color:var(--red)}
+  .blocked h2{font-size:20px;font-weight:800}
+  .blocked p{color:var(--muted);font-size:14px;line-height:1.6}
+  .blocked .tel{color:#fff;font-size:16px;margin-top:6px}
+  .blocked .out{margin-top:20px;background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer}
+
+  /* 스캐너 */
+  #scanScreen{background:#000}
+  .scanwrap{position:relative;flex:1;display:flex;flex-direction:column}
+  #video{width:100%;height:100vh;object-fit:cover}
+  .scan-top{position:absolute;top:0;left:0;right:0;padding:env(safe-area-inset-top) 20px 0;display:flex;justify-content:space-between;align-items:center;z-index:5;pointer-events:none}
+  .scan-top button{pointer-events:auto;margin-top:14px;background:rgba(0,0,0,.6);color:#fff;border:none;padding:10px 14px;border-radius:10px;font-family:'Manrope';font-size:14px;cursor:pointer}
+  .scan-frame{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:260px;height:260px;border:3px solid #fff;border-radius:24px;box-shadow:0 0 0 9999px rgba(0,0,0,.55)}
+  .scan-bottom{position:absolute;left:0;right:0;bottom:0;padding:20px 30px env(safe-area-inset-bottom);z-index:5;display:flex;flex-direction:column;gap:10px}
+  .scan-bottom .info{color:#fff;text-align:center;font-size:14px;margin-bottom:8px;text-shadow:0 1px 4px rgba(0,0,0,.7)}
+  .scan-bottom button{background:rgba(0,0,0,.6);color:#fff;border:none;padding:14px;border-radius:12px;font-family:'Manrope';font-size:14px;cursor:pointer}
+
+  /* 결제 성공 */
+  #paySuccessScreen{background:#000}
+  .success{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:22px;cursor:pointer}
+  .success .ring{width:140px;height:140px;border-radius:50%;background:rgba(67,209,122,.15);display:flex;align-items:center;justify-content:center;animation:pop .5s ease}
+  .success .ring.charge{background:rgba(90,167,255,.15)}
+  .success .ring .ck{font-size:64px;color:var(--green);font-weight:900}
+  .success .ring.charge .ck{color:var(--blue)}
+  @keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+  .success .label{font-size:17px;color:var(--muted)}
+  .success .amt{font-family:'Space Mono',monospace;font-size:50px;font-weight:700;color:#fff}
+  .success .where{font-size:16px;color:var(--muted)}
+  .success .hint{position:absolute;bottom:40px;font-size:12px;color:rgba(140,136,126,.6)}
+
+  /* 모달 (금액·확인) */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:30px}
+  .modal-bg.on{display:flex}
+  .modal{background:#1a1a1c;border:1px solid var(--line);border-radius:18px;padding:24px;max-width:340px;width:100%}
+  .modal h3{font-size:17px;font-weight:800;margin-bottom:8px}
+  .modal p{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+  .modal input{width:100%;padding:14px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:11px;color:#fff;font-family:'Manrope';font-size:18px;text-align:center;margin-bottom:8px}
+  .modal-btns{display:flex;gap:8px;margin-top:14px}
+  .modal-btns button{flex:1;padding:13px;border:none;border-radius:11px;font-family:'Manrope';font-weight:700;font-size:15px;cursor:pointer}
+  .modal-btns .cancel{background:rgba(255,255,255,.1);color:#fff}
+  .modal-btns .ok{background:#fff;color:#000}
+  .modal-btns .danger{background:#fff;color:var(--red)}
+
+  /* 지도 */
+  #mapScreen{background:#000}
+  #mapScreen.on{display:flex;flex-direction:column;height:100vh}
+  #profileScreen{background:#000}
+  #profileScreen.on{display:flex;flex-direction:column;height:100vh}
+  .map-top{display:flex;justify-content:space-between;align-items:center;padding:env(safe-area-inset-top) 16px 12px;background:#0a0a0b;z-index:5}
+  .map-top button{background:rgba(255,255,255,.1);color:#fff;border:none;padding:9px 14px;border-radius:10px;font-family:'Manrope';font-size:14px;cursor:pointer}
+  .map-title{font-size:15px;font-weight:700;color:#fff}
+  .leaflet-popup-content-wrapper{background:#1a1a1c;color:#fff;border-radius:14px}
+  .leaflet-popup-tip{background:#1a1a1c}
+  .leaflet-popup-content{margin:14px 18px;font-family:'Manrope'}
+  .pop-name{font-size:15px;font-weight:800;margin-bottom:4px}
+  .pop-cat{font-size:12px;color:var(--muted);margin-bottom:8px}
+  .pop-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+  .pop-badge.on{background:rgba(67,209,122,.2);color:var(--green)}
+  .pop-badge.off{background:rgba(140,136,126,.2);color:var(--muted)}
+  .pop-addr{font-size:11px;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<section class="screen on" id="authScreen">
+  <div class="auth">
+    <div class="logo-wrap"><div class="cross"></div><div class="brand">HANIL <b>Pay</b></div></div>
+    <div class="tabs"><div class="tab on" data-mode="login">로그인</div><div class="tab" data-mode="signup">회원가입</div></div>
+    <div class="field"><label>이메일</label><input id="email" type="email" autocomplete="email" placeholder="example@hanil.or.kr"></div>
+    <div class="field"><label id="pwLabel">비밀번호</label><input id="password" type="password" autocomplete="current-password" placeholder="비밀번호"><div class="forgot" id="forgotBtn">비밀번호를 잊으셨나요?</div></div>
+    <!-- 비밀번호 강도/조건 (회원가입 시) -->
+    <div id="pwStrengthWrap" style="display:none;margin-top:-6px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="flex:1;height:6px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden">
+          <div id="pwBar" style="height:100%;width:0;border-radius:3px;transition:all .25s"></div>
+        </div>
+        <span id="pwStrengthLabel" style="font-size:12px;font-weight:700;min-width:48px;text-align:right"></span>
+      </div>
+      <div style="font-size:12px;line-height:1.9">
+        <div id="pwRule-len">○ 8자 이상</div>
+        <div id="pwRule-letter">○ 영문 포함</div>
+        <div id="pwRule-num">○ 숫자 포함</div>
+        <div id="pwRule-upper" style="color:#888">○ 대문자 포함 (권장)</div>
+        <div id="pwRule-special" style="color:#888">○ 특수문자 포함 (권장)</div>
+      </div>
+    </div>
+    <div id="signupFields" style="display:none">
+      <div class="field"><label>비밀번호 확인</label><input id="passwordConfirm" type="password" autocomplete="new-password" placeholder="비밀번호를 한 번 더 입력"><div id="pwMatch" style="font-size:12px;margin-top:5px"></div></div>
+      <div class="field"><label>이름</label><input id="name" type="text" placeholder="실명을 입력하세요"></div>
+      <div class="field"><label>휴대폰 번호</label><input id="phone" type="tel" inputmode="numeric" placeholder="01012345678"></div>
+      <div class="field"><label>소속 교회</label><select id="church"><option>한일교회</option><option>다른 교회</option><option>기타 소속</option></select></div>
+      <div class="field"><label>교구</label><select id="district">
+        <option value="">교구를 선택하세요</option>
+        <option>1교구</option><option>2교구</option><option>3교구</option><option>4교구</option>
+        <option>새가족교구</option><option>영아교구</option><option>유치교구</option>
+        <option>초등1교구</option><option>초등2교구</option><option>중고등교구</option>
+        <option>청년교구</option><option>무교구</option><option>장기결석</option>
+      </select></div>
+      <div class="field"><label>직분 (여러 개 선택 가능)</label><div class="chips" id="positionChips"></div></div>
+      <div class="helper">가입 후 관리자가 교회 명부와 대조해 승인합니다. (2~3일 소요)</div>
+    </div>
+    <button class="go" id="goBtn">로그인</button>
+    <div class="msg" id="msg"></div>
+    <img src="church_logo.png" alt="한일교회" style="max-width:150px;opacity:.85;margin:24px auto 0;display:block" onerror="this.style.display='none'">
+    <div class="legal">한일교회 · 도봉구 방학로 57-17 · TEL. 02-954-9191<br><a href="https://hanil.or.kr" target="_blank">홈페이지</a> · <a href="https://youtube.com/@9549191" target="_blank">유튜브</a></div>
+  </div>
+</section>
+
+<!-- 지갑 -->
+<section class="screen" id="walletScreen">
+  <div class="wallet">
+    <div class="wheader">
+      <div class="wbrand" id="btnProfile" style="cursor:pointer"><div class="b1">HANIL <b style="color:var(--gold)">Pay</b></div><div class="b2"><span id="userName">—</span>님 <span style="color:var(--muted);font-size:12px">›</span></div></div>
+      <div class="wicons"><button id="btnMap" title="지도">🗺</button><button id="btnLogout" class="logout" title="로그아웃">↪</button></div>
+    </div>
+    <div class="balance"><span class="num" id="balanceNum">0</span><span class="won">원</span></div>
+    <div class="pending" id="pendingMsg" style="display:none">⏳ 관리자 승인 대기 중 — 승인 후 결제할 수 있어요</div>
+    <div id="announceBanner" style="display:none;margin:0 26px 14px;padding:14px 16px;background:rgba(67,209,209,.13);border:1px solid rgba(67,209,209,.35);border-radius:13px">
+      <div id="announceTitle" style="font-weight:700;font-size:14px;color:#fff"></div>
+      <div id="announceBody" style="font-size:13px;color:rgba(244,241,234,.85);margin-top:4px;white-space:pre-wrap"></div>
+    </div>
+    <div class="actions">
+      <button class="btn-pay" id="btnPay" disabled>📷 QR 스캔하여 결제하기</button>
+      <button class="btn-charge" id="btnCharge">🎟 충전권으로 충전하기</button>
+    </div>
+    <div class="history-wrap">
+      <div class="history-title">최근 이용 내역</div>
+      <div class="history" id="history"><div class="empty">아직 이용 내역이 없어요.</div></div>
+    </div>
+    <div class="footer">
+      <div class="links"><a href="https://hanil.or.kr" target="_blank"><img class="ico-img" src="data:image/png;base64,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" alt="">홈페이지</a><a href="https://youtube.com/@9549191" target="_blank" class="yt"><span class="ico">▶</span>유튜브</a></div>
+      <div class="addr">한일교회 · 도봉구 방학로 57-17<br>TEL. 02-954-9191</div>
+    </div>
+  </div>
+</section>
+
+<!-- 차단 -->
+<section class="screen" id="blockedScreen">
+  <div class="blocked">
+    <div class="ic">🔒</div><h2>이용이 제한된 계정입니다</h2>
+    <p>관리자에 의해 차단된 상태예요.<br>자세한 내용은 담당 관리자에게 문의해주세요.</p>
+    <div class="tel">☎ 02-954-9191</div>
+    <button class="out" id="blockedOut">로그아웃</button>
+  </div>
+</section>
+
+<!-- 지도 -->
+<section class="screen" id="mapScreen">
+  <div class="map-top"><button id="mapBack">← 닫기</button><div class="map-title">사용 가능 가맹점</div><div style="width:60px"></div></div>
+  <div id="map" style="height:48%;width:100%;background:#222"></div>
+  <div id="merchantList" style="flex:1;overflow-y:auto;background:#0a0a0b;padding:8px 14px 20px"></div>
+</section>
+
+<!-- 내 정보 -->
+<section class="screen" id="profileScreen">
+  <div class="map-top"><button id="profileBack">← 닫기</button><div class="map-title">내 정보</div><div style="width:60px"></div></div>
+  <div style="flex:1;overflow-y:auto;padding:20px 22px 40px">
+    <div style="margin-bottom:18px">
+      <div id="profileName" style="font-size:22px;font-weight:800;color:#fff">—</div>
+      <div style="font-size:12px;color:#888;margin-top:2px">이름은 교회 명부 대조용이라 수정할 수 없어요.</div>
+    </div>
+
+    <div class="field"><label>전화번호</label>
+      <input id="profilePhone" type="tel" placeholder="010-0000-0000"></div>
+
+    <div class="field"><label>교구</label>
+      <select id="profileDistrict">
+        <option value="">교구를 선택하세요</option>
+        <option>1교구</option><option>2교구</option><option>3교구</option><option>4교구</option>
+        <option>새가족교구</option><option>영아교구</option><option>유치교구</option>
+        <option>초등1교구</option><option>초등2교구</option><option>중고등교구</option>
+        <option>청년교구</option><option>무교구</option><option>장기결석</option>
+      </select></div>
+
+    <div class="field"><label>직분 (여러 개 선택 가능)</label>
+      <div id="profilePositions" class="chips"></div></div>
+
+    <button class="big" id="profileSave" style="margin-top:8px">저장</button>
+
+    <div style="height:1px;background:rgba(255,255,255,.1);margin:24px 0"></div>
+
+    <button class="big" id="profileChangePw" style="background:rgba(255,255,255,.1);color:#fff">🔑 비밀번호 변경</button>
+  </div>
+</section>
+
+<!-- 스캐너 -->
+<section class="screen" id="scanScreen">
+  <div class="scanwrap">
+    <video id="video" playsinline muted></video>
+    <div class="scan-top"><button id="scanBack">← 닫기</button></div>
+    <div class="scan-frame"></div>
+    <div class="scan-bottom">
+      <div class="info" id="scanInfo">가맹점 QR을 사각형 안에 맞춰주세요</div>
+      <button id="scanManual">코드 직접 입력</button>
+    </div>
+  </div>
+</section>
+
+<!-- 결제 성공 -->
+<section class="screen" id="paySuccessScreen">
+  <div class="success" id="paySuccessBox">
+    <div class="ring" id="successRing"><div class="ck">✓</div></div>
+    <div class="label" id="successLabel">결제 완료</div>
+    <div class="amt" id="successAmt">0 원</div>
+    <div class="where" id="successWhere"></div>
+    <div class="hint">화면을 탭하면 닫혀요</div>
+  </div>
+</section>
+
+<!-- 모달 (공용) -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3 id="modalTitle">제목</h3>
+    <p id="modalMsg">메시지</p>
+    <input id="modalInput" style="display:none">
+    <div class="modal-btns">
+      <button class="cancel" id="modalCancel">취소</button>
+      <button class="ok" id="modalOk">확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ⚙️ Supabase 값 */
+  const SUPABASE_URL  = "https://omnpkfyzqzihksawyxfr.supabase.co";
+  const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tbnBrZnl6cXppaGtzYXd5eGZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MDQ4MTUsImV4cCI6MjA5NTE4MDgxNX0.9sq1RkQZEPDH8qxeLQO2ghwsHCzCCp2dYvnL8Qrr4tg";
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  const $ = (id)=>document.getElementById(id);
+  const won = (n)=>Number(n||0).toLocaleString('ko-KR');
+  const POSITIONS = ["성도","집사","안수집사","권사","장로","전도사","목사","교사","청년부","찬양대"];
+  const selectedPos = new Set();
+  let mode = "login";
+
+  // 현재 결제 대상 정보 (스캔 또는 코드입력으로 채워짐)
+  let payTarget = { id:"", name:"" };
+  let scanMode = "pay";   // "pay"(결제) | "coupon"(쿠폰 충전)
+
+  function show(name){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+    $(name+"Screen").classList.add("on");
+  }
+
+  // 모달 헬퍼: type = 'confirm' | 'input'
+  function openModal({title, message, inputPlaceholder, okText="확인", okClass="ok", onOk, cancelText="취소", onCancel}){
+    $("modalTitle").textContent = title;
+    $("modalMsg").textContent = message;
+    const input = $("modalInput");
+    if(inputPlaceholder!==undefined){
+      input.style.display="block"; input.placeholder = inputPlaceholder; input.value=""; input.type="text";
+      input.inputMode = inputPlaceholder.includes("금액") ? "numeric" : "text";
+    } else { input.style.display="none"; }
+    const okBtn = $("modalOk");
+    okBtn.textContent = okText; okBtn.className = okClass;
+    okBtn.onclick = ()=>{ const v = input.style.display==="block" ? input.value : null; closeModal(); onOk && onOk(v); };
+    const cancelBtn = $("modalCancel");
+    cancelBtn.textContent = cancelText;
+    cancelBtn.onclick = ()=>{ closeModal(); onCancel && onCancel(); };
+    $("modal").classList.add("on");
+    if(inputPlaceholder!==undefined) setTimeout(()=>input.focus(), 50);
+  }
+  function closeModal(){ $("modal").classList.remove("on"); }
+
+  // ── 직분/탭/로그인 (이전 단계와 동일) ──
+  const chipBox = $("positionChips");
+  POSITIONS.forEach(p=>{ const el=document.createElement("div");el.className="chip";el.textContent=p;
+    el.addEventListener("click",()=>{ if(selectedPos.has(p)){selectedPos.delete(p);el.classList.remove("on");}else{selectedPos.add(p);el.classList.add("on");} });
+    chipBox.appendChild(el);
+  });
+  document.querySelectorAll(".tab").forEach(t=>{
+    t.addEventListener("click",()=>{
+      document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on")); t.classList.add("on");
+      mode=t.dataset.mode;
+      $("signupFields").style.display = (mode==="signup")?"block":"none";
+      $("pwStrengthWrap").style.display = (mode==="signup")?"block":"none";
+      $("goBtn").textContent = (mode==="signup")?"회원가입":"로그인";
+      $("pwLabel").textContent = (mode==="signup")?"비밀번호 (8자 이상)":"비밀번호";
+      $("forgotBtn").style.display = (mode==="signup")?"none":"block";
+      $("password").value=""; $("passwordConfirm").value="";
+      updatePwStrength(); updatePwMatch();
+      setMsg("","");
+    });
+  });
+
+  // 비밀번호 강도/조건 실시간 표시
+  function pwChecks(pw){
+    return {
+      len: pw.length >= 8,
+      letter: /[a-zA-Z]/.test(pw),
+      num: /[0-9]/.test(pw),
+      upper: /[A-Z]/.test(pw),
+      special: /[!@#$%^&*()_+\-=\[\]{}|;:'",.<>?\/~`\\]/.test(pw)
+    };
+  }
+  function updatePwStrength(){
+    const pw = $("password").value;
+    const c = pwChecks(pw);
+    const setRule = (id, ok, dim)=>{
+      const el = $(id); if(!el) return;
+      el.textContent = (ok?"● ":"○ ") + el.textContent.replace(/^[●○]\s/,"");
+      el.style.color = ok ? "#43d17a" : (dim ? "#888" : "#fff");
+    };
+    setRule("pwRule-len", c.len, false);
+    setRule("pwRule-letter", c.letter, false);
+    setRule("pwRule-num", c.num, false);
+    setRule("pwRule-upper", c.upper, true);
+    setRule("pwRule-special", c.special, true);
+    // 점수 (필수 4개 기준)
+    let score = (c.len?1:0)+(c.upper?1:0)+(c.num?1:0)+(c.special?1:0);
+    const bar = $("pwBar"), label = $("pwStrengthLabel");
+    const levels = [
+      {w:"25%", c:"#ff6b6b", t:"약함"},
+      {w:"50%", c:"#ffa94d", t:"보통"},
+      {w:"75%", c:"#ffd43b", t:"강함"},
+      {w:"100%", c:"#43d17a", t:"매우 강함"}
+    ];
+    if(pw.length===0){ bar.style.width="0"; label.textContent=""; return; }
+    const lv = levels[Math.min(score,4)-1] || levels[0];
+    bar.style.width = lv.w; bar.style.background = lv.c;
+    label.textContent = lv.t; label.style.color = lv.c;
+  }
+  function updatePwMatch(){
+    const pw=$("password").value, pc=$("passwordConfirm").value;
+    const el=$("pwMatch");
+    if(!pc){ el.textContent=""; return; }
+    if(pw===pc){ el.textContent="✓ 비밀번호가 일치해요"; el.style.color="#43d17a"; }
+    else { el.textContent="✕ 비밀번호가 일치하지 않아요"; el.style.color="#ff6b6b"; }
+  }
+  $("password").addEventListener("input", ()=>{ updatePwStrength(); updatePwMatch(); });
+  $("passwordConfirm").addEventListener("input", updatePwMatch);
+
+  function setMsg(text,kind=""){ const m=$("msg"); m.textContent=text; m.className="msg "+(kind||""); }
+
+  $("goBtn").addEventListener("click", async ()=>{
+    const email=$("email").value.trim(), password=$("password").value;
+    if(!email||!password){ setMsg("이메일과 비밀번호를 입력하세요.","err"); return; }
+    if(mode==="signup"){
+      const c = pwChecks(password);
+      if(!c.len){ setMsg("비밀번호는 8자 이상이어야 해요.","err"); return; }
+      if(!c.letter || !c.num){ setMsg("비밀번호에 영문과 숫자를 포함해주세요.","err"); return; }
+      if(password !== $("passwordConfirm").value){ setMsg("비밀번호 확인이 일치하지 않아요.","err"); return; }
+    }
+    $("goBtn").disabled=true; setMsg("처리 중…","");
+    try{
+      if(mode==="login"){
+        const {error}=await sb.auth.signInWithPassword({email,password});
+        if(error) setMsg("로그인 실패: "+error.message,"err"); else await afterLogin();
+      } else {
+        const name=$("name").value.trim(), phone=$("phone").value.trim(), church=$("church").value, district=$("district").value;
+        if(!name||!phone){ setMsg("이름과 휴대폰 번호를 입력하세요.","err"); $("goBtn").disabled=false; return; }
+        const {error}=await sb.auth.signUp({email,password,options:{data:{name,phone,church_name:church,district:district,positions:Array.from(selectedPos).join(",")}}});
+        if(error) setMsg("가입 실패: "+error.message,"err"); else setMsg("가입 신청 완료! 관리자 승인 후 로그인할 수 있어요.","ok");
+      }
+    }catch(e){ setMsg("오류: "+e.message,"err"); }
+    $("goBtn").disabled=false;
+  });
+  $("forgotBtn").addEventListener("click", async ()=>{
+    const email = $("email").value.trim();
+    if(!email){ setMsg("먼저 이메일을 입력해주세요.","err"); return; }
+    setMsg("재설정 코드 발송 중…","");
+    const {error} = await sb.auth.resetPasswordForEmail(email);
+    if(error){ setMsg("발송 실패: "+error.message,"err"); return; }
+    setMsg("메일로 인증 코드를 보냈어요.","ok");
+    // 코드 입력 모달
+    openModal({
+      title:"재설정 코드 입력", message:`${email} 로 보낸 인증 코드를 입력하세요.`,
+      inputPlaceholder:"인증 코드", okText:"확인",
+      onOk:async (code)=>{
+        if(!code){ return; }
+        const {error:e2} = await sb.auth.verifyOtp({ email, token: code.trim(), type: "recovery" });
+        if(e2){ openModal({title:"오류",message:"코드가 올바르지 않거나 만료됐어요.",okText:"확인",onOk:()=>{}}); return; }
+        // 통과 후 자동 로그인된 상태 → 새 비번 입력
+        openModal({
+          title:"새 비밀번호 설정", message:"로그인에 사용할 새 비밀번호를 입력하세요 (6자 이상).",
+          inputPlaceholder:"새 비밀번호", okText:"변경",
+          onOk: async (np)=>{
+            if(!np || np.length<6){ openModal({title:"오류",message:"비밀번호는 6자 이상이어야 해요.",okText:"확인",onOk:()=>{}}); return; }
+            const {error:e3} = await sb.auth.updateUser({ password: np });
+            if(e3){ openModal({title:"변경 실패",message:e3.message,okText:"확인",onOk:()=>{}}); }
+            else { await afterLogin(); }
+          }
+        });
+      }
+    });
+  });
+
+  // ── 회원정보 + 잔액 + 내역 ──
+  let currentMember = null;
+  async function afterLogin(){
+    const {data:m, error} = await sb.from("members").select("name, balance, status, is_admin").single();
+    if(error){ setMsg("회원 정보 조회 실패: "+error.message,"err"); return; }
+    if(m.status==="blocked"){ show("blocked"); return; }
+    currentMember = m;
+    $("userName").textContent = m.name||"";
+    $("balanceNum").textContent = won(m.balance);
+    $("pendingMsg").style.display = (m.status==="pending")?"block":"none";
+    $("btnPay").disabled = (m.status!=="approved");
+    const {data:txns} = await sb.from("transactions").select("id, amount, created_at, is_refund, merchants(name, category)").order("created_at",{ascending:false}).limit(50);
+    renderHistory(txns||[]);
+    await loadAnnouncement();
+    show("wallet");
+  }
+
+  // 활성 공지 배너
+  async function loadAnnouncement(){
+    try{
+      const { data } = await sb.from("announcements").select("title, body, is_active").eq("is_active", true).limit(1);
+      const banner = $("announceBanner");
+      if(data && data.length){
+        $("announceTitle").textContent = "📢 " + (data[0].title || "");
+        $("announceBody").textContent = data[0].body || "";
+        $("announceBody").style.display = data[0].body ? "block" : "none";
+        banner.style.display = "block";
+      } else {
+        banner.style.display = "none";
+      }
+    }catch(e){ /* 공지 없으면 무시 */ }
+  }
+  async function refreshWallet(){
+    const {data:m} = await sb.from("members").select("name, balance, status").single();
+    if(m){ currentMember=Object.assign(currentMember||{},m); $("balanceNum").textContent=won(m.balance); }
+    const {data:txns} = await sb.from("transactions").select("id, amount, created_at, is_refund, merchants(name, category)").order("created_at",{ascending:false}).limit(50);
+    renderHistory(txns||[]);
+  }
+  function renderHistory(list){
+    const box=$("history");
+    if(!list.length){ box.innerHTML='<div class="empty">아직 이용 내역이 없어요.</div>'; return; }
+    box.innerHTML = list.map(t=>{
+      const isPlus = t.amount > 0;
+      const isRefund = t.is_refund === true;
+      const mname = t.merchants?.name || "충전/기타";
+      let name, icon, iconCls;
+      if(isRefund){ name = mname + " 취소"; icon = "↩"; iconCls = "in"; }
+      else if(isPlus){ name = "충전/기타"; icon = "＋"; iconCls = "in"; }
+      else { name = mname; icon = iconFor(t.merchants?.category); iconCls = ""; }
+      const date = (t.created_at||"").slice(0,10);
+      return `<div class="item"><div class="ic ${iconCls}">${icon}</div>
+        <div class="info"><div class="name">${name}</div><div class="date">${date}</div></div>
+        <div class="amt ${isPlus?'in':'out'}">${isPlus?'+':''}${won(t.amount)}원</div></div>`;
+    }).join("");
+  }
+  function iconFor(c){return{"카페":"☕","식당":"🍴","학원":"📖","미용실":"✂","서점":"📚","마트":"🛒","병원":"✚"}[c]||"🏪";}
+
+  // ════════ 결제 ════════
+  let videoStream = null;
+  let scanRAF = null;
+
+  $("btnPay").addEventListener("click", ()=>{ scanMode="pay"; startScan(); });
+
+  async function startScan(){
+    show("scan");
+    $("scanInfo").textContent = "카메라 켜는 중…";
+    $("scanManual").textContent = (scanMode==="coupon") ? "코드 직접 입력" : "코드 직접 입력";
+    try{
+      videoStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:"environment" }, audio:false });
+      const v = $("video"); v.srcObject = videoStream; await v.play();
+      $("scanInfo").textContent = (scanMode==="coupon") ? "충전권 QR을 사각형 안에 맞춰주세요" : "가맹점 QR을 사각형 안에 맞춰주세요";
+      loopScan();
+    }catch(e){
+      $("scanInfo").textContent = "카메라를 켤 수 없어요. '코드 직접 입력'을 눌러주세요.";
+    }
+  }
+
+  function stopScan(){
+    if(scanRAF){ cancelAnimationFrame(scanRAF); scanRAF=null; }
+    if(videoStream){ videoStream.getTracks().forEach(t=>t.stop()); videoStream=null; }
+  }
+
+  function loopScan(){
+    const v = $("video");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d", {willReadFrequently:true});
+    function tick(){
+      if(!videoStream){ return; }
+      if(v.readyState === v.HAVE_ENOUGH_DATA){
+        canvas.width = v.videoWidth; canvas.height = v.videoHeight;
+        ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(img.data, img.width, img.height, { inversionAttempts:"dontInvert" });
+        if(code && code.data){
+          stopScan();
+          const val = code.data.trim();
+          if(scanMode === "coupon"){ show("wallet"); redeemCoupon(val); }
+          else { handleScannedMerchant(val); }
+          return;
+        }
+      }
+      scanRAF = requestAnimationFrame(tick);
+    }
+    scanRAF = requestAnimationFrame(tick);
+  }
+
+  $("scanBack").addEventListener("click", ()=>{ stopScan(); scanMode="pay"; show("wallet"); });
+  $("scanManual").addEventListener("click", ()=>{
+    stopScan(); show("wallet");
+    if(scanMode === "coupon"){
+      openCouponInput();
+    } else {
+      openModal({
+        title:"가맹점 코드 입력", message:"가맹점의 QR 코드(가맹점 ID)를 직접 입력하세요.",
+        inputPlaceholder:"가맹점 ID", okText:"다음",
+        onOk:(v)=>{ if(v) handleScannedMerchant(v.trim()); }
+      });
+    }
+  });
+
+  async function handleScannedMerchant(merchantId){
+    // 등록된 가맹점인지 확인
+    const {data:list, error} = await sb.from("merchants").select("id, name").eq("id", merchantId).limit(1);
+    if(error || !list.length){
+      show("wallet");
+      openModal({title:"가맹점 확인 실패", message:"등록되지 않은 가맹점 QR이에요.", okText:"확인", onOk:()=>{}});
+      return;
+    }
+    payTarget = { id:list[0].id, name:list[0].name };
+    show("wallet");
+    // 금액 입력
+    openModal({
+      title:`${payTarget.name} 결제`, message:"결제할 금액을 입력하세요.",
+      inputPlaceholder:"결제 금액(원)", okText:"다음",
+      onOk:(v)=>{
+        const amt = parseInt(v);
+        if(!amt||amt<=0){ openModal({title:"오류",message:"올바른 금액을 입력해주세요.",okText:"확인",onOk:()=>{}}); return; }
+        // 결제 확인
+        openModal({
+          title:"결제 확인", message:`${payTarget.name}에서 ${won(amt)}원을 결제할까요?`,
+          okText:"결제하기", onOk:()=>doPay(amt)
+        });
+      }
+    });
+  }
+
+  async function doPay(amount){
+    try{
+      const idem = crypto.randomUUID ? crypto.randomUUID() : (Date.now()+"-"+Math.random());
+      const {data, error} = await sb.rpc("redeem", { p_merchant_id: payTarget.id, p_amount: amount, p_idempotency_key: idem });
+      if(error){
+        openModal({title:"결제 오류", message:error.message, okText:"확인", onOk:()=>{}});
+        return;
+      }
+      if(data && data.success){
+        showPaySuccess(amount, payTarget.name);
+        await refreshWallet();
+      } else {
+        openModal({title:"결제 실패", message:(data&&data.error)||"결제할 수 없습니다.", okText:"확인", onOk:()=>{}});
+      }
+    }catch(e){
+      openModal({title:"결제 오류", message:e.message, okText:"확인", onOk:()=>{}});
+    }
+  }
+
+  function showPaySuccess(amount, where){
+    $("successLabel").textContent = "결제 완료";
+    $("successAmt").textContent = won(amount) + " 원";
+    $("successWhere").textContent = where;
+    $("successRing").classList.remove("charge");
+    show("paySuccess");
+    setTimeout(()=>{ if(document.getElementById("paySuccessScreen").classList.contains("on")) show("wallet"); }, 2500);
+  }
+  $("paySuccessBox").addEventListener("click", ()=>show("wallet"));
+
+  // 충전·비번변경·로그아웃
+  $("btnCharge").addEventListener("click", chooseCouponMethod);
+
+  // 충전 방식 선택: QR 스캔 vs 코드 직접 입력
+  function chooseCouponMethod(){
+    openModal({
+      title:"충전권으로 충전", message:"충전 방식을 선택하세요.",
+      okText:"📷 QR 스캔", onOk:()=>startCouponScan(),
+      cancelText:"⌨ 코드 입력", onCancel:()=>openCouponInput()
+    });
+  }
+  function startCouponScan(){ scanMode = "coupon"; startScan(); }
+
+  $("btnMap").addEventListener("click", openMap);
+  $("mapBack").addEventListener("click", ()=>show("wallet"));
+
+  let mapInstance = null;
+  let mapLoaded = false;
+  async function openMap(){
+    show("map");
+    if(!mapLoaded){
+      // 도봉구 한일교회 근처 (기본 위치)
+      mapInstance = L.map("map").setView([37.6655, 127.0345], 14);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:"© OpenStreetMap", maxZoom:19
+      }).addTo(mapInstance);
+      mapLoaded = true;
+      await loadMerchantsOnMap();
+    }
+    setTimeout(()=>mapInstance.invalidateSize(), 100);
+  }
+
+  async function loadMerchantsOnMap(){
+    const {data, error} = await sb.from("merchants")
+      .select("id, name, category, address, latitude, longitude, is_open");
+    if(error || !data) return;
+    const valid = data.filter(m=>m.latitude && m.longitude);
+    const listBox = $("merchantList");
+
+    if(valid.length === 0){
+      listBox.innerHTML = '<div style="color:#888;text-align:center;padding:30px;font-size:14px">등록된 가맹점이 없어요.</div>';
+      return;
+    }
+
+    const markers = {};   // id → marker (리스트에서 핀 찾으려고 기억)
+
+    valid.forEach(m=>{
+      const icon = iconFor(m.category);
+      const html = `<div style="width:34px;height:34px;border-radius:50%;background:#000;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:16px">${icon}</div>`;
+      const customIcon = L.divIcon({ html, className:"", iconSize:[34,34], iconAnchor:[17,17] });
+      const marker = L.marker([m.latitude, m.longitude], {icon:customIcon}).addTo(mapInstance);
+      const badge = m.is_open
+        ? '<span class="pop-badge on">영업 중</span>'
+        : '<span class="pop-badge off">영업 마감</span>';
+      marker.bindPopup(`
+        <div class="pop-name">${m.name} ${badge}</div>
+        ${m.category ? `<div class="pop-cat">${m.category}</div>` : ""}
+        ${m.address ? `<div class="pop-addr">${m.address}</div>` : ""}
+      `);
+      markers[m.id] = marker;
+    });
+
+    // 아래 리스트 그리기 (영업중 먼저, 그 안에서 이름순)
+    const sorted = [...valid].sort((a,b)=>{
+      if(a.is_open !== b.is_open) return a.is_open ? -1 : 1;
+      return (a.name||"").localeCompare(b.name||"");
+    });
+    listBox.innerHTML = sorted.map(m=>{
+      const icon = iconFor(m.category);
+      const badge = m.is_open
+        ? '<span style="font-size:11px;font-weight:700;color:#43d17a;background:rgba(67,209,122,.15);padding:2px 7px;border-radius:6px">영업 중</span>'
+        : '<span style="font-size:11px;font-weight:700;color:#888;background:rgba(255,255,255,.08);padding:2px 7px;border-radius:6px">영업 마감</span>';
+      return `<div class="merchant-item" data-id="${m.id}" style="display:flex;align-items:center;gap:12px;padding:13px;margin-bottom:8px;background:rgba(255,255,255,.05);border-radius:13px;cursor:pointer">
+        <div style="width:38px;height:38px;border-radius:50%;background:#000;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:15px;color:#fff;display:flex;align-items:center;gap:6px">${m.name} ${badge}</div>
+          ${m.address ? `<div style="font-size:12px;color:#888;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.address}</div>` : ""}
+        </div>
+      </div>`;
+    }).join("");
+
+    // 리스트 항목 누르면 → 그 핀으로 지도 이동 + 팝업 열기 (C)
+    listBox.querySelectorAll(".merchant-item").forEach(el=>{
+      el.addEventListener("click", ()=>{
+        const m = markers[el.dataset.id];
+        if(m){
+          mapInstance.setView(m.getLatLng(), 17, {animate:true});
+          m.openPopup();
+        }
+      });
+    });
+
+    // 모든 핀이 보이게 자동 줌
+    if(valid.length > 1){
+      const bounds = L.latLngBounds(valid.map(m=>[m.latitude, m.longitude]));
+      mapInstance.fitBounds(bounds, { padding:[40,40] });
+    } else {
+      mapInstance.setView([valid[0].latitude, valid[0].longitude], 16);
+    }
+  }
+
+  function openCouponInput(){
+    openModal({
+      title:"충전권 코드 입력", message:"충전권에 적힌 코드를 입력하세요.",
+      inputPlaceholder:"예: HANIL-XXXX...", okText:"충전",
+      onOk:(v)=>{ if(v) redeemCoupon(v.trim()); }
+    });
+  }
+
+  async function redeemCoupon(code){
+    try{
+      const {data, error} = await sb.rpc("redeem_coupon", { p_code: code });
+      if(error){ openModal({title:"충전 오류", message:error.message, okText:"확인", onOk:()=>{}}); return; }
+      if(data && data.success){
+        showChargeSuccess(data.amount || 0);
+        await refreshWallet();
+      } else {
+        openModal({title:"충전 실패", message:(data&&data.error)||"충전할 수 없습니다.", okText:"확인", onOk:()=>{}});
+      }
+    }catch(e){
+      openModal({title:"충전 오류", message:e.message, okText:"확인", onOk:()=>{}});
+    }
+  }
+
+  function showChargeSuccess(amount){
+    $("successLabel").textContent = "충전 완료";
+    $("successAmt").textContent = "+" + won(amount) + " 원";
+    $("successWhere").textContent = "";
+    $("successRing").classList.add("charge");
+    show("paySuccess");
+    setTimeout(()=>{ if(document.getElementById("paySuccessScreen").classList.contains("on")) show("wallet"); }, 2500);
+  }
+  // 내 정보 화면
+  let profileLoaded = false;
+  $("btnProfile").addEventListener("click", openProfile);
+  $("profileBack").addEventListener("click", ()=>show("wallet"));
+  $("profileChangePw").addEventListener("click", openChangePw);
+
+  async function openProfile(){
+    show("profile");
+    // 현재 내 정보 불러오기
+    try{
+      const { data } = await sb.from("members").select("name, phone, district, positions").single();
+      if(data){
+        $("profileName").textContent = data.name || "—";
+        $("profilePhone").value = data.phone || "";
+        $("profileDistrict").value = data.district || "";
+        // 직분 칩 그리기
+        const cur = Array.isArray(data.positions) ? data.positions : [];
+        const box = $("profilePositions");
+        box.innerHTML = "";
+        POSITIONS.forEach(p=>{
+          const el = document.createElement("div");
+          el.className = "chip" + (cur.includes(p) ? " on" : "");
+          el.textContent = p;
+          el.addEventListener("click", ()=> el.classList.toggle("on"));
+          box.appendChild(el);
+        });
+      }
+    }catch(e){ /* 무시 */ }
+  }
+
+  $("profileSave").addEventListener("click", async ()=>{
+    const phone = $("profilePhone").value.trim();
+    const district = $("profileDistrict").value;
+    const positions = Array.from($("profilePositions").querySelectorAll(".chip.on")).map(el=>el.textContent);
+    const btn = $("profileSave");
+    btn.disabled = true; btn.textContent = "저장 중…";
+    try{
+      const { data, error } = await sb.rpc("update_my_profile", {
+        p_phone: phone, p_district: district, p_positions: positions
+      });
+      if(error){ throw error; }
+      openModal({title:"저장 완료", message:"내 정보가 저장되었어요.", okText:"확인", onOk:()=>show("wallet")});
+    }catch(e){
+      openModal({title:"저장 실패", message:"잠시 후 다시 시도해주세요.", okText:"확인", onOk:()=>{}});
+    }
+    btn.disabled = false; btn.textContent = "저장";
+  });
+
+  function openChangePw(){
+    openModal({
+      title:"비밀번호 변경", message:"새로 사용할 비밀번호를 입력하세요 (6자 이상).",
+      inputPlaceholder:"새 비밀번호", okText:"다음",
+      onOk:(v)=>{
+        if(!v || v.length < 6){ openModal({title:"오류",message:"비밀번호는 6자 이상이어야 해요.",okText:"확인",onOk:()=>{}}); return; }
+        const newPw = v;
+        openModal({
+          title:"비밀번호를 변경할까요?", message:"변경 후에는 새 비밀번호로 로그인해야 해요.",
+          okText:"변경", onOk: async ()=>{
+            const {error} = await sb.auth.updateUser({ password: newPw });
+            if(error){ openModal({title:"변경 실패",message:error.message,okText:"확인",onOk:()=>{}}); }
+            else { openModal({title:"완료",message:"비밀번호가 변경됐어요.",okText:"확인",onOk:()=>{}}); }
+          }
+        });
+      }
+    });
+  }
+  $("btnLogout").addEventListener("click", ()=>{
+    openModal({title:"로그아웃", message:"로그아웃 할까요? 다시 들어오려면 이메일과 비밀번호로 로그인해야 해요.",
+      okText:"로그아웃", okClass:"danger", onOk: async ()=>{ await sb.auth.signOut(); location.reload(); }});
+  });
+  $("blockedOut").addEventListener("click", async ()=>{ await sb.auth.signOut(); location.reload(); });
+
+  // 시작
+  sb.auth.getSession().then(({data})=>{ if(data.session) afterLogin(); });
+
+  // PWA: 서비스 워커 등록 (홈 화면 추가 + 오프라인 일부)
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", ()=>{
+      navigator.serviceWorker.register("sw.js").catch(()=>{});
+    });
+  }
+</script>
+</body>
+</html>

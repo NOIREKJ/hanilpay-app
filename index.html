@@ -824,8 +824,19 @@
   });
   $("blockedOut").addEventListener("click", async ()=>{ await sb.auth.signOut(); location.reload(); });
 
-  // 시작
-  sb.auth.getSession().then(({data})=>{ if(data.session) afterLogin(); });
+// 시작 — 요람 앱에서 넘어온 토큰이 있으면 자동 로그인
+  (async ()=>{
+    const h = new URLSearchParams(location.hash.slice(1));
+    const at = h.get("at"), rt = h.get("rt");
+    if(at && rt){
+      // 주소에서 토큰 즉시 제거 (기록에 안 남게)
+      history.replaceState(null, "", location.pathname + location.search);
+      const { error } = await sb.auth.setSession({ access_token: at, refresh_token: rt });
+      if(!error){ await afterLogin(); return; }
+    }
+    const { data } = await sb.auth.getSession();
+    if(data.session) await afterLogin();
+  })();
 
   // PWA: 서비스 워커 등록 (홈 화면 추가 + 오프라인 일부)
   if("serviceWorker" in navigator){

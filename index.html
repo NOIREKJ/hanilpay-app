@@ -150,6 +150,79 @@
   .pop-badge.on{background:rgba(67,209,122,.2);color:var(--green)}
   .pop-badge.off{background:rgba(140,136,126,.2);color:var(--muted)}
   .pop-addr{font-size:11px;color:var(--muted);margin-top:6px}
+
+  /* ── 하단 탭바 (지갑/내역/사용처/마이) ── */
+  #tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;justify-content:space-around;align-items:stretch;background:rgba(12,12,14,.97);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:7px 0 calc(6px + env(safe-area-inset-bottom))}
+  .tabbtn{flex:1;background:none;border:none;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Manrope';font-size:11px;font-weight:600;padding:4px 0}
+  .tabbtn .ti{font-size:21px;line-height:1}
+  .tabbtn.on{color:var(--cyan)}
+  .tabpad{padding-bottom:80px !important}
+
+  /* ── 공용 탭 페이지 ── */
+  .page{max-width:480px;margin:0 auto;width:100%;min-height:100vh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 0}
+  .page-head{padding:22px 24px 6px}
+  .page-title{font-size:24px;font-weight:800;letter-spacing:-.02em}
+
+  /* ── 지갑: 이번달 요약 / 자주 가는 곳 / 최근내역 헤더 ── */
+  .card{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:16px}
+  .summary{display:flex;gap:10px;padding:0 26px 20px}
+  .summary .cell{flex:1;padding:14px 16px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px}
+  .summary .cell .lb{font-size:12px;color:var(--muted);margin-bottom:6px}
+  .summary .cell .vv{font-family:'Space Mono',monospace;font-size:19px;font-weight:700}
+  .summary .cell.charge .vv{color:var(--blue)}
+  .summary .cell.pay .vv{color:var(--text)}
+  .sec-head{display:flex;align-items:center;justify-content:space-between;padding:0 26px 10px}
+  .sec-head .t{font-size:16px;font-weight:800}
+  .sec-head .more{font-size:13px;color:var(--cyan);background:none;border:none;cursor:pointer;font-family:'Manrope';font-weight:600}
+  .favs{display:flex;gap:10px;overflow-x:auto;padding:0 26px 20px;-webkit-overflow-scrolling:touch}
+  .favs::-webkit-scrollbar{height:0}
+  .fav{flex-shrink:0;min-width:96px;padding:14px 12px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;cursor:pointer;text-align:center;color:#fff}
+  .fav .fi{font-size:22px;margin-bottom:6px}
+  .fav .fn{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:88px}
+
+  /* ── 내역 탭 (은행 명세서식) ── */
+  .hist-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:6px 24px 12px}
+  .hist-nav button{background:rgba(255,255,255,.08);border:none;color:#fff;width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer}
+  .hist-nav .mlabel{font-size:16px;font-weight:800;min-width:110px;text-align:center}
+  .hist-filters{display:flex;gap:8px;padding:0 24px 12px}
+  .hist-filters button{flex:1;padding:9px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;color:var(--muted);font-family:'Manrope';font-weight:700;font-size:13px;cursor:pointer}
+  .hist-filters button.on{background:rgba(67,209,209,.15);border-color:rgba(67,209,209,.4);color:var(--cyan)}
+  .hist-sum{display:flex;gap:10px;padding:0 24px 14px}
+  .hist-sum .cell{flex:1;padding:12px 14px;background:rgba(255,255,255,.05);border-radius:12px;text-align:center}
+  .hist-sum .cell .lb{font-size:11px;color:var(--muted);margin-bottom:5px}
+  .hist-sum .cell .vv{font-family:'Space Mono',monospace;font-size:16px;font-weight:700}
+  .hist-body{flex:1;padding:0 24px 90px}
+  .day-group{margin-bottom:14px}
+  .day-label{font-size:12px;color:var(--muted);font-weight:700;margin:0 4px 8px}
+
+  /* ── 마이 탭 ── */
+  .my-hero{margin:6px 24px 18px;padding:26px;border-radius:20px;text-align:center;background:linear-gradient(180deg,rgba(67,209,209,.16),rgba(255,255,255,.03))}
+  .my-avatar{width:88px;height:88px;border-radius:50%;margin:0 auto 12px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid rgba(67,209,209,.55);box-shadow:0 0 16px rgba(67,209,209,.25)}
+  .my-avatar img{width:100%;height:100%;object-fit:cover}
+  .my-avatar .ph{font-size:36px;color:var(--muted)}
+  .my-name{font-size:21px;font-weight:800}
+  .my-tags{margin-top:6px;display:flex;gap:6px;justify-content:center;align-items:center}
+  .my-badge{font-size:11px;font-weight:800;color:#04211f;background:var(--cyan);padding:3px 9px;border-radius:20px}
+  .my-sub{font-size:12px;color:var(--muted)}
+  .my-menu{margin:0 24px;border-radius:16px;overflow:hidden;background:rgba(255,255,255,.06)}
+  .myrow{display:flex;align-items:center;gap:14px;padding:15px 16px;cursor:pointer;color:#fff;border:none;background:none;width:100%;font-family:'Manrope';font-size:15px;text-align:left}
+  .myrow .mi{width:24px;text-align:center;color:var(--cyan);font-size:17px}
+  .myrow .mchev{margin-left:auto;color:var(--muted);font-size:13px}
+  .myrow-div{height:1px;background:rgba(255,255,255,.08);margin-left:54px}
+  .my-note{font-size:12px;color:var(--muted);padding:14px 28px 6px}
+  .my-meta{margin:6px 24px 0;padding:16px;background:rgba(255,255,255,.06);border-radius:16px;font-size:13px}
+  .my-meta .mrow{display:flex;justify-content:space-between;padding:3px 0}
+  .my-meta .mrow .k{color:var(--muted)}
+  .my-logout{margin:14px 24px 0;padding:15px;width:calc(100% - 48px);background:rgba(255,255,255,.06);border:none;border-radius:16px;color:var(--red);font-family:'Manrope';font-weight:700;font-size:15px;cursor:pointer}
+  .my-foot{text-align:center;color:var(--muted);font-size:11px;line-height:1.7;padding:22px 24px 100px}
+  .my-foot img{max-width:130px;opacity:.85;margin-top:10px;display:block;margin-left:auto;margin-right:auto}
+
+  /* ── 사용처 탭 검색/즐겨찾기 ── */
+  .map-search{padding:0 16px 10px;background:#0a0a0b}
+  .map-search input{width:100%;padding:11px 14px;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:12px;color:#fff;font-family:'Manrope';font-size:14px}
+  .map-search input:focus{outline:none;border-color:var(--cyan)}
+  .list-sec-label{font-size:12px;color:var(--muted);font-weight:700;padding:8px 4px 6px}
+  .fav-star{margin-left:auto;background:none;border:none;font-size:18px;cursor:pointer;flex-shrink:0;padding:4px}
 </style>
 </head>
 <body>
@@ -201,10 +274,9 @@
 
 <!-- 지갑 -->
 <section class="screen" id="walletScreen">
-  <div class="wallet">
+  <div class="wallet tabpad">
     <div class="wheader">
       <div class="wbrand"><div class="b1">HANIL <b style="color:var(--gold)">Pay</b></div><div class="b2"><span id="userName">—</span>님</div></div>
-      <div class="wicons"><button id="btnMap" title="지도">🗺</button><button id="btnLogout" class="logout" title="로그아웃">↪</button></div>
     </div>
     <div class="balance"><span class="num" id="balanceNum">0</span><span class="won">원</span></div>
     <div class="pending" id="pendingMsg" style="display:none">⏳ 관리자 승인 대기 중 — 승인 후 결제할 수 있어요</div>
@@ -216,8 +288,22 @@
       <button class="btn-pay" id="btnPay" disabled>📷 QR 스캔하여 결제하기</button>
       <button class="btn-charge" id="btnCharge">🎟 충전권으로 충전하기</button>
     </div>
+
+    <!-- 이번 달 요약 -->
+    <div class="summary">
+      <div class="cell charge"><div class="lb">이번 달 충전</div><div class="vv"><span id="sumCharge">0</span>원</div></div>
+      <div class="cell pay"><div class="lb">이번 달 사용</div><div class="vv"><span id="sumPay">0</span>원</div></div>
+    </div>
+
+    <!-- 자주 가는 곳 -->
+    <div id="favWrap" style="display:none">
+      <div class="sec-head"><div class="t">자주 가는 곳</div></div>
+      <div class="favs" id="favList"></div>
+    </div>
+
+    <!-- 최근 내역 -->
+    <div class="sec-head"><div class="t">최근 이용 내역</div><button class="more" id="goHistory">전체 보기 ›</button></div>
     <div class="history-wrap">
-      <div class="history-title">최근 이용 내역</div>
       <div class="history" id="history"><div class="empty">아직 이용 내역이 없어요.</div></div>
     </div>
     <div class="footer">
@@ -237,11 +323,12 @@
   </div>
 </section>
 
-<!-- 지도 -->
+<!-- 사용처 (탭) -->
 <section class="screen" id="mapScreen">
-  <div class="map-top"><button id="mapBack">← 닫기</button><div class="map-title">사용 가능 가맹점</div><div style="width:60px"></div></div>
-  <div id="map" style="height:48%;width:100%;background:#222"></div>
-  <div id="merchantList" style="flex:1;overflow-y:auto;background:#0a0a0b;padding:8px 14px 20px"></div>
+  <div class="map-top"><div class="map-title">사용 가능 가맹점</div></div>
+  <div class="map-search"><input id="merchantSearch" type="search" placeholder="가맹점 이름 검색" autocomplete="off"></div>
+  <div id="map" style="height:42%;width:100%;background:#222"></div>
+  <div id="merchantList" style="flex:1;overflow-y:auto;background:#0a0a0b;padding:10px 14px 90px"></div>
 </section>
 
 <!-- 스캐너 -->
@@ -267,6 +354,70 @@
     <div class="hint">화면을 탭하면 닫혀요</div>
   </div>
 </section>
+
+<!-- 내역 (탭) -->
+<section class="screen" id="historyScreen">
+  <div class="page tabpad">
+    <div class="page-head"><div class="page-title">이용 내역</div></div>
+    <div class="hist-nav">
+      <button id="histPrev">‹</button>
+      <div class="mlabel" id="histMonth">—</div>
+      <button id="histNext">›</button>
+    </div>
+    <div class="hist-filters">
+      <button class="on" data-f="all" id="fAll">전체</button>
+      <button data-f="charge" id="fCharge">충전</button>
+      <button data-f="pay" id="fPay">결제</button>
+    </div>
+    <div class="hist-sum">
+      <div class="cell"><div class="lb">충전</div><div class="vv" style="color:var(--blue)"><span id="histSumCharge">0</span></div></div>
+      <div class="cell"><div class="lb">사용</div><div class="vv"><span id="histSumPay">0</span></div></div>
+    </div>
+    <div class="hist-body" id="histBody"><div class="empty">내역을 불러오는 중…</div></div>
+  </div>
+</section>
+
+<!-- 마이 (탭) -->
+<section class="screen" id="myScreen">
+  <div class="page tabpad">
+    <div class="my-hero">
+      <div class="my-avatar" id="myAvatar"><div class="ph">👤</div></div>
+      <div class="my-name"><span id="myName">—</span>님</div>
+      <div class="my-tags"><span class="my-badge" id="myAdminBadge" style="display:none">관리자</span><span class="my-sub">HANIL Pay</span></div>
+    </div>
+    <div class="my-menu">
+      <button class="myrow" id="myCoupon"><span class="mi">🎟</span>쿠폰함<span class="mchev">›</span></button>
+      <div class="myrow-div"></div>
+      <button class="myrow" id="myYoram"><span class="mi">📖</span>요람 앱 열기<span class="mchev">›</span></button>
+      <div class="myrow-div"></div>
+      <button class="myrow" id="myYoutube"><span class="mi">▶</span>유튜브<span class="mchev">›</span></button>
+      <div class="myrow-div"></div>
+      <button class="myrow" id="myInquiry"><span class="mi">✉</span>문의하기<span class="mchev">›</span></button>
+      <div class="myrow-div"></div>
+      <button class="myrow" id="myKakao"><span class="mi">💬</span>카카오톡 문의<span class="mchev">›</span></button>
+      <div class="myrow-div"></div>
+      <button class="myrow" id="myChangePw"><span class="mi">🔒</span>비밀번호 변경<span class="mchev">›</span></button>
+    </div>
+    <div class="my-note">앱에 오류나 문제가 있으면 '문의하기'로 알려주세요.</div>
+    <div class="my-meta">
+      <div class="mrow"><span class="k">버전</span><span id="myVersion">1.0</span></div>
+      <div class="mrow"><span class="k">제작</span><span>김준 · THE KJ STUDIO</span></div>
+    </div>
+    <button class="my-logout" id="myLogout">로그아웃</button>
+    <div class="my-foot">
+      한일교회 · 도봉구 방학로 57-17<br>TEL. 02-954-9191
+      <img src="church_logo.png" alt="한일교회" onerror="this.style.display='none'">
+    </div>
+  </div>
+</section>
+
+<!-- 하단 탭바 -->
+<nav id="tabbar">
+  <button class="tabbtn on" data-tab="wallet"><span class="ti">💳</span>지갑</button>
+  <button class="tabbtn" data-tab="history"><span class="ti">🧾</span>내역</button>
+  <button class="tabbtn" data-tab="map"><span class="ti">🗺</span>사용처</button>
+  <button class="tabbtn" data-tab="my"><span class="ti">👤</span>마이</button>
+</nav>
 
 <!-- 모달 (공용) -->
 <div class="modal-bg" id="modal">
@@ -311,10 +462,25 @@
   let payTarget = { id:"", name:"" };
   let scanMode = "pay";   // "pay"(결제) | "coupon"(쿠폰 충전)
 
+  const TAB_SCREENS = ["wallet","history","map","my"];
   function show(name){
     document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
     $(name+"Screen").classList.add("on");
+    // 하단 탭바는 로그인 후 4개 탭에서만 보인다 (로그인/스캔/성공/차단 화면에선 숨김)
+    const isTab = TAB_SCREENS.includes(name);
+    $("tabbar").style.display = isTab ? "flex" : "none";
+    if(isTab){
+      document.querySelectorAll(".tabbtn").forEach(b=>b.classList.toggle("on", b.dataset.tab===name));
+      if(name==="map") ensureMap();
+      if(name==="history") loadHistoryTab();
+      if(name==="my") loadMyTab();
+      window.scrollTo(0,0);
+    }
   }
+  // 탭바 버튼
+  document.querySelectorAll(".tabbtn").forEach(b=>{
+    b.addEventListener("click", ()=> show(b.dataset.tab));
+  });
 
   // 모달 헬퍼: type = 'confirm' | 'input'
   function openModal({title, message, inputPlaceholder, okText="확인", okClass="ok", onOk, cancelText="취소", onCancel}){
@@ -451,7 +617,7 @@
   // ── 회원정보 + 잔액 + 내역 ──
   let currentMember = null;
   async function afterLogin(){
-    const {data:m, error} = await sb.from("members").select("name, balance, status, is_admin").single();
+    const {data:m, error} = await sb.from("members").select("name, balance, status, is_admin, photo_url").single();
     if(error){ setMsg("회원 정보 조회 실패: "+error.message,"err"); return; }
     if(m.status==="blocked"){ show("blocked"); return; }
     currentMember = m;
@@ -459,10 +625,56 @@
     $("balanceNum").textContent = won(m.balance);
     $("pendingMsg").style.display = (m.status==="pending")?"block":"none";
     $("btnPay").disabled = (m.status!=="approved");
-    const {data:txns} = await sb.from("transactions").select("id, amount, created_at, is_refund, merchants(name, category)").order("created_at",{ascending:false}).limit(50);
+    const {data:txns} = await sb.from("transactions").select("id, amount, created_at, is_refund, merchants(name, category)").order("created_at",{ascending:false}).limit(5);
     renderHistory(txns||[]);
     await loadAnnouncement();
+    await loadWalletExtras();
     show("wallet");
+  }
+
+  // 지갑 부가 정보: 이번 달 요약 + 자주 가는 곳
+  async function loadWalletExtras(){
+    await Promise.all([loadMonthSummary(), loadFavorites()]);
+  }
+
+  async function loadMonthSummary(){
+    try{
+      const now = new Date();
+      const from = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const to   = new Date(now.getFullYear(), now.getMonth()+1, 1).toISOString();
+      const {data} = await sb.rpc("my_transactions", { p_from: from, p_to: to });
+      let charge=0, pay=0;
+      (data||[]).forEach(r=>{
+        if(r.is_refund) return;
+        if(r.merchant_name==null) charge += r.amount; else pay += r.amount;
+      });
+      $("sumCharge").textContent = won(charge);
+      $("sumPay").textContent = won(pay);
+    }catch(e){ /* RPC 없거나 실패 시 0 유지 */ }
+  }
+
+  function getFavIds(){ try{ return JSON.parse(localStorage.getItem("pay_fav_merchants")||"[]"); }catch(e){ return []; } }
+  function setFavIds(ids){ localStorage.setItem("pay_fav_merchants", JSON.stringify(ids)); }
+  function toggleFav(id){
+    const ids = getFavIds();
+    const i = ids.indexOf(id);
+    if(i>=0) ids.splice(i,1); else ids.push(id);
+    setFavIds(ids); return ids.indexOf(id)>=0;
+  }
+
+  async function loadFavorites(){
+    const ids = getFavIds();
+    const wrap = $("favWrap"), box = $("favList");
+    if(!ids.length){ wrap.style.display="none"; return; }
+    try{
+      const {data} = await sb.from("merchants").select("id, name, category").in("id", ids);
+      if(!data || !data.length){ wrap.style.display="none"; return; }
+      box.innerHTML = data.map(m=>`<div class="fav" data-id="${m.id}" data-name="${(m.name||'').replace(/"/g,'&quot;')}"><div class="fi">${iconFor(m.category)}</div><div class="fn">${m.name||''}</div></div>`).join("");
+      box.querySelectorAll(".fav").forEach(el=>{
+        el.addEventListener("click", ()=> startAmountEntry({ id: el.dataset.id, name: el.dataset.name }));
+      });
+      wrap.style.display="block";
+    }catch(e){ wrap.style.display="none"; }
   }
 
   // 활성 공지 배너
@@ -483,8 +695,9 @@
   async function refreshWallet(){
     const {data:m} = await sb.from("members").select("name, balance, status").single();
     if(m){ currentMember=Object.assign(currentMember||{},m); $("balanceNum").textContent=won(m.balance); }
-    const {data:txns} = await sb.from("transactions").select("id, amount, created_at, is_refund, merchants(name, category)").order("created_at",{ascending:false}).limit(50);
+    const {data:txns} = await sb.from("transactions").select("id, amount, created_at, is_refund, merchants(name, category)").order("created_at",{ascending:false}).limit(5);
     renderHistory(txns||[]);
+    await loadWalletExtras();
   }
   function renderHistory(list){
     const box=$("history");
@@ -510,6 +723,7 @@
   let scanRAF = null;
 
   $("btnPay").addEventListener("click", ()=>{ scanMode="pay"; startScan(); });
+  $("goHistory").addEventListener("click", ()=> show("history"));
 
   async function startScan(){
     show("scan");
@@ -544,7 +758,7 @@
         if(code && code.data){
           stopScan();
           const val = code.data.trim();
-          if(scanMode === "coupon"){ show("wallet"); redeemCoupon(val); }
+          if(scanMode === "coupon"){ show("wallet"); handleCoupon(val); }
           else { handleScannedMerchant(val); }
           return;
         }
@@ -576,16 +790,24 @@
       openModal({title:"가맹점 확인 실패", message:"등록되지 않은 가맹점 QR이에요.", okText:"확인", onOk:()=>{}});
       return;
     }
-    payTarget = { id:list[0].id, name:list[0].name };
+    startAmountEntry({ id:list[0].id, name:list[0].name });
+  }
+
+  // 금액 입력 → 확인 → 결제 (스캔 결과·자주가는곳 공용)
+  function startAmountEntry(target){
+    if(currentMember && currentMember.status!=="approved"){
+      show("wallet");
+      openModal({title:"결제할 수 없어요", message:"관리자 승인 후 결제할 수 있어요.", okText:"확인", onOk:()=>{}});
+      return;
+    }
+    payTarget = { id:target.id, name:target.name };
     show("wallet");
-    // 금액 입력
     openModal({
       title:`${payTarget.name} 결제`, message:"결제할 금액을 입력하세요.",
       inputPlaceholder:"결제 금액(원)", okText:"다음",
       onOk:(v)=>{
         const amt = parseInt(v);
         if(!amt||amt<=0){ openModal({title:"오류",message:"올바른 금액을 입력해주세요.",okText:"확인",onOk:()=>{}}); return; }
-        // 결제 확인
         openModal({
           title:"결제 확인", message:`${payTarget.name}에서 ${won(amt)}원을 결제할까요?`,
           okText:"결제하기", onOk:()=>doPay(amt)
@@ -636,13 +858,10 @@
   }
   function startCouponScan(){ scanMode = "coupon"; startScan(); }
 
-  $("btnMap").addEventListener("click", openMap);
-  $("mapBack").addEventListener("click", ()=>show("wallet"));
-
   let mapInstance = null;
   let mapLoaded = false;
-  async function openMap(){
-    show("map");
+  // show("map")에서 호출 — 최초 1회 지도 초기화 후 매번 크기 보정
+  async function ensureMap(){
     if(!mapLoaded){
       // 도봉구 한일교회 근처 (기본 위치)
       mapInstance = L.map("map").setView([37.6655, 127.0345], 14);
@@ -652,24 +871,24 @@
       mapLoaded = true;
       await loadMerchantsOnMap();
     }
-    setTimeout(()=>mapInstance.invalidateSize(), 100);
+    setTimeout(()=>{ if(mapInstance) mapInstance.invalidateSize(); }, 120);
   }
 
+  let allMerchants = [];        // 지도에 뜬 가맹점 전체 (검색·즐겨찾기 렌더용)
+  const markers = {};           // id → marker
   async function loadMerchantsOnMap(){
     const {data, error} = await sb.from("merchants")
       .select("id, name, category, address, latitude, longitude, is_open");
     if(error || !data) return;
-    const valid = data.filter(m=>m.latitude && m.longitude);
+    allMerchants = data.filter(m=>m.latitude && m.longitude);
     const listBox = $("merchantList");
 
-    if(valid.length === 0){
+    if(allMerchants.length === 0){
       listBox.innerHTML = '<div style="color:#888;text-align:center;padding:30px;font-size:14px">등록된 가맹점이 없어요.</div>';
       return;
     }
 
-    const markers = {};   // id → marker (리스트에서 핀 찾으려고 기억)
-
-    valid.forEach(m=>{
+    allMerchants.forEach(m=>{
       const icon = iconFor(m.category);
       const html = `<div style="width:34px;height:34px;border-radius:50%;background:#000;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:16px">${icon}</div>`;
       const customIcon = L.divIcon({ html, className:"", iconSize:[34,34], iconAnchor:[17,17] });
@@ -685,51 +904,178 @@
       markers[m.id] = marker;
     });
 
-    // 아래 리스트 그리기 (영업중 먼저, 그 안에서 이름순)
-    const sorted = [...valid].sort((a,b)=>{
+    renderMerchantList("");
+
+    // 모든 핀이 보이게 자동 줌
+    if(allMerchants.length > 1){
+      const bounds = L.latLngBounds(allMerchants.map(m=>[m.latitude, m.longitude]));
+      mapInstance.fitBounds(bounds, { padding:[40,40] });
+    } else {
+      mapInstance.setView([allMerchants[0].latitude, allMerchants[0].longitude], 16);
+    }
+  }
+
+  function merchantRowHTML(m){
+    const icon = iconFor(m.category);
+    const fav = getFavIds().includes(m.id);
+    const badge = m.is_open
+      ? '<span style="font-size:11px;font-weight:700;color:#43d17a;background:rgba(67,209,122,.15);padding:2px 7px;border-radius:6px">영업 중</span>'
+      : '<span style="font-size:11px;font-weight:700;color:#888;background:rgba(255,255,255,.08);padding:2px 7px;border-radius:6px">영업 마감</span>';
+    return `<div class="merchant-item" data-id="${m.id}" style="display:flex;align-items:center;gap:12px;padding:13px;margin-bottom:8px;background:rgba(255,255,255,.05);border-radius:13px;cursor:pointer">
+      <div style="width:38px;height:38px;border-radius:50%;background:#000;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:15px;color:#fff;display:flex;align-items:center;gap:6px">${m.name} ${badge}</div>
+        ${m.address ? `<div style="font-size:12px;color:#888;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.address}</div>` : ""}
+      </div>
+      <button class="fav-star" data-fav="${m.id}" title="즐겨찾기">${fav?"⭐":"☆"}</button>
+    </div>`;
+  }
+
+  function renderMerchantList(query){
+    const listBox = $("merchantList");
+    const q = (query||"").trim().toLowerCase();
+    const byName = (a,b)=>{
       if(a.is_open !== b.is_open) return a.is_open ? -1 : 1;
       return (a.name||"").localeCompare(b.name||"");
-    });
-    listBox.innerHTML = sorted.map(m=>{
-      const icon = iconFor(m.category);
-      const badge = m.is_open
-        ? '<span style="font-size:11px;font-weight:700;color:#43d17a;background:rgba(67,209,122,.15);padding:2px 7px;border-radius:6px">영업 중</span>'
-        : '<span style="font-size:11px;font-weight:700;color:#888;background:rgba(255,255,255,.08);padding:2px 7px;border-radius:6px">영업 마감</span>';
-      return `<div class="merchant-item" data-id="${m.id}" style="display:flex;align-items:center;gap:12px;padding:13px;margin-bottom:8px;background:rgba(255,255,255,.05);border-radius:13px;cursor:pointer">
-        <div style="width:38px;height:38px;border-radius:50%;background:#000;border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${icon}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-weight:700;font-size:15px;color:#fff;display:flex;align-items:center;gap:6px">${m.name} ${badge}</div>
-          ${m.address ? `<div style="font-size:12px;color:#888;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.address}</div>` : ""}
-        </div>
-      </div>`;
-    }).join("");
+    };
+    let list = allMerchants;
+    if(q) list = list.filter(m=>(m.name||"").toLowerCase().includes(q) || (m.address||"").toLowerCase().includes(q));
+    const favIds = getFavIds();
+    const favs = list.filter(m=>favIds.includes(m.id)).sort(byName);
+    const rest = list.filter(m=>!favIds.includes(m.id)).sort(byName);
 
-    // 리스트 항목 누르면 → 그 핀으로 지도 이동 + 팝업 열기 (C)
+    let html = "";
+    if(!list.length){ html = '<div style="color:#888;text-align:center;padding:30px;font-size:14px">검색 결과가 없어요.</div>'; }
+    else {
+      if(favs.length){ html += `<div class="list-sec-label">⭐ 즐겨찾기</div>` + favs.map(merchantRowHTML).join(""); }
+      if(rest.length){ html += (favs.length?`<div class="list-sec-label">전체</div>`:"") + rest.map(merchantRowHTML).join(""); }
+    }
+    listBox.innerHTML = html;
+
+    // 항목 클릭 → 핀 이동 + 팝업
     listBox.querySelectorAll(".merchant-item").forEach(el=>{
       el.addEventListener("click", ()=>{
         const m = markers[el.dataset.id];
-        if(m){
-          mapInstance.setView(m.getLatLng(), 17, {animate:true});
-          m.openPopup();
-        }
+        if(m){ mapInstance.setView(m.getLatLng(), 17, {animate:true}); m.openPopup(); }
       });
     });
-
-    // 모든 핀이 보이게 자동 줌
-    if(valid.length > 1){
-      const bounds = L.latLngBounds(valid.map(m=>[m.latitude, m.longitude]));
-      mapInstance.fitBounds(bounds, { padding:[40,40] });
-    } else {
-      mapInstance.setView([valid[0].latitude, valid[0].longitude], 16);
-    }
+    // 별표 토글
+    listBox.querySelectorAll(".fav-star").forEach(btn=>{
+      btn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        toggleFav(btn.dataset.fav);
+        renderMerchantList($("merchantSearch").value);
+      });
+    });
   }
+
+  $("merchantSearch").addEventListener("input", (e)=> renderMerchantList(e.target.value));
 
   function openCouponInput(){
     openModal({
       title:"충전권 코드 입력", message:"충전권에 적힌 코드를 입력하세요.",
-      inputPlaceholder:"예: HANIL-XXXX...", okText:"충전",
-      onOk:(v)=>{ if(v) redeemCoupon(v.trim()); }
+      inputPlaceholder:"예: HANIL-XXXX...", okText:"다음",
+      onOk:(v)=>{ if(v) handleCoupon(v.trim()); }
     });
+  }
+
+  // 충전권: 바로 충전 vs 쿠폰함에 저장 (아이폰과 동일)
+  function handleCoupon(code){
+    openModal({
+      title:"충전권", message:"이 충전권을 어떻게 할까요?",
+      okText:"바로 충전", onOk:()=>redeemCoupon(code),
+      cancelText:"쿠폰함에 저장", onCancel:()=>claimCoupon(code)
+    });
+  }
+  async function claimCoupon(code){
+    try{
+      const {data, error} = await sb.rpc("claim_coupon", { p_code: code });
+      if(error){ openModal({title:"저장 오류", message:error.message, okText:"확인", onOk:()=>{}}); return; }
+      if(data && data.success){
+        openModal({title:"저장 완료", message:"쿠폰함에 저장했어요. 마이 > 쿠폰함에서 충전할 수 있어요.", okText:"확인", onOk:()=>{}});
+      } else {
+        openModal({title:"저장 실패", message:(data&&data.error)||"저장할 수 없습니다.", okText:"확인", onOk:()=>{}});
+      }
+    }catch(e){ openModal({title:"저장 오류", message:e.message, okText:"확인", onOk:()=>{}}); }
+  }
+
+  // ════════ 내역 탭 (은행 명세서식) ════════
+  let histRef = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  let histFilter = "all";
+  let histRows = [];
+  $("histPrev").addEventListener("click", ()=>{ histRef = new Date(histRef.getFullYear(), histRef.getMonth()-1, 1); loadHistoryTab(); });
+  $("histNext").addEventListener("click", ()=>{
+    const next = new Date(histRef.getFullYear(), histRef.getMonth()+1, 1);
+    if(next <= new Date()) { histRef = next; loadHistoryTab(); }   // 미래 달로는 못 감
+  });
+  ["fAll","fCharge","fPay"].forEach(id=>{
+    $(id).addEventListener("click", ()=>{
+      histFilter = $(id).dataset.f;
+      document.querySelectorAll(".hist-filters button").forEach(b=>b.classList.toggle("on", b.id===id));
+      renderHistBody();
+    });
+  });
+  async function loadHistoryTab(){
+    $("histMonth").textContent = histRef.getFullYear() + "년 " + (histRef.getMonth()+1) + "월";
+    const from = new Date(histRef.getFullYear(), histRef.getMonth(), 1).toISOString();
+    const to   = new Date(histRef.getFullYear(), histRef.getMonth()+1, 1).toISOString();
+    $("histBody").innerHTML = '<div class="empty">불러오는 중…</div>';
+    try{
+      const {data, error} = await sb.rpc("my_transactions", { p_from: from, p_to: to });
+      if(error) throw error;
+      histRows = data || [];
+    }catch(e){
+      // RPC 미배포 등 — transactions 직접 조회로 대체
+      const {data} = await sb.from("transactions")
+        .select("amount, created_at, is_refund, merchants(name)")
+        .gte("created_at", from).lt("created_at", to)
+        .order("created_at",{ascending:false});
+      histRows = (data||[]).map(t=>({ amount:t.amount, created_at:t.created_at, is_refund:t.is_refund, merchant_name: t.merchants?.name || null }));
+    }
+    // 합계
+    let charge=0, pay=0;
+    histRows.forEach(r=>{ if(r.is_refund) return; if(r.merchant_name==null) charge+=r.amount; else pay+=r.amount; });
+    $("histSumCharge").textContent = "+" + won(charge);
+    $("histSumPay").textContent = won(pay);
+    renderHistBody();
+  }
+  function renderHistBody(){
+    const box = $("histBody");
+    let rows = histRows;
+    if(histFilter==="charge") rows = rows.filter(r=>r.merchant_name==null && !r.is_refund);
+    else if(histFilter==="pay") rows = rows.filter(r=>r.merchant_name!=null && !r.is_refund);
+    if(!rows.length){ box.innerHTML = '<div class="empty">이 달의 내역이 없어요.</div>'; return; }
+    // 날짜별 그룹 (최신순)
+    const groups = {};
+    rows.forEach(r=>{ const d=(r.created_at||"").slice(0,10); (groups[d]=groups[d]||[]).push(r); });
+    const days = Object.keys(groups).sort().reverse();
+    box.innerHTML = days.map(d=>{
+      const items = groups[d].map(r=>{
+        const isPlus = r.merchant_name==null && !r.is_refund;
+        const isRefund = r.is_refund===true;
+        let name, icon, cls;
+        if(isRefund){ name=(r.merchant_name||"충전/기타")+" 취소"; icon="↩"; cls="in"; }
+        else if(isPlus){ name="충전/기타"; icon="＋"; cls="in"; }
+        else { name=r.merchant_name; icon="🏪"; cls=""; }
+        const time = timeText(r.created_at);
+        return `<div class="item"><div class="ic ${cls}">${icon}</div>
+          <div class="info"><div class="name">${name}</div><div class="date">${time}</div></div>
+          <div class="amt ${isPlus?'in':'out'}">${isPlus?'+':''}${won(r.amount)}원</div></div>`;
+      }).join("");
+      return `<div class="day-group"><div class="day-label">${dayLabel(d)}</div><div style="display:flex;flex-direction:column;gap:10px">${items}</div></div>`;
+    }).join("");
+  }
+  function dayLabel(d){
+    const dt = new Date(d + "T00:00:00");
+    const wd = ["일","월","화","수","목","금","토"][dt.getDay()];
+    return (dt.getMonth()+1) + "월 " + dt.getDate() + "일 (" + wd + ")";
+  }
+  function timeText(iso){
+    const dt = new Date(iso);
+    if(isNaN(dt)) return "";
+    let h = dt.getHours(); const m = String(dt.getMinutes()).padStart(2,"0");
+    const ap = h<12 ? "오전" : "오후"; h = h%12; if(h===0) h=12;
+    return ap + " " + h + ":" + m;
   }
 
   async function redeemCoupon(code){
@@ -755,54 +1101,7 @@
     show("paySuccess");
     setTimeout(()=>{ if(document.getElementById("paySuccessScreen").classList.contains("on")) show("wallet"); }, 2500);
   }
-  // 내 정보 화면
-  let profileLoaded = false;
-  $("btnProfile")?.addEventListener("click", openProfile);
-  $("profileBack")?.addEventListener("click", ()=>show("wallet"));
-  $("profileChangePw")?.addEventListener("click", openChangePw);
-
-  async function openProfile(){
-    show("profile");
-    // 현재 내 정보 불러오기
-    try{
-      const { data } = await sb.from("members").select("name, phone, district, positions").single();
-      if(data){
-        $("profileName").textContent = data.name || "—";
-        $("profilePhone").value = data.phone || "";
-        $("profileDistrict").value = data.district || "";
-        // 직분 칩 그리기
-        const cur = Array.isArray(data.positions) ? data.positions : [];
-        const box = $("profilePositions");
-        box.innerHTML = "";
-        POSITIONS.forEach(p=>{
-          const el = document.createElement("div");
-          el.className = "chip" + (cur.includes(p) ? " on" : "");
-          el.textContent = p;
-          el.addEventListener("click", ()=> el.classList.toggle("on"));
-          box.appendChild(el);
-        });
-      }
-    }catch(e){ /* 무시 */ }
-  }
-
-  $("profileSave")?.addEventListener("click", async ()=>{
-    const phone = $("profilePhone").value.trim();
-    const district = $("profileDistrict").value;
-    const positions = Array.from($("profilePositions").querySelectorAll(".chip.on")).map(el=>el.textContent);
-    const btn = $("profileSave");
-    btn.disabled = true; btn.textContent = "저장 중…";
-    try{
-      const { data, error } = await sb.rpc("update_my_profile", {
-        p_phone: phone, p_district: district, p_positions: positions
-      });
-      if(error){ throw error; }
-      openModal({title:"저장 완료", message:"내 정보가 저장되었어요.", okText:"확인", onOk:()=>show("wallet")});
-    }catch(e){
-      openModal({title:"저장 실패", message:"잠시 후 다시 시도해주세요.", okText:"확인", onOk:()=>{}});
-    }
-    btn.disabled = false; btn.textContent = "저장";
-  });
-
+  // (예전 '내 정보' 별도 화면은 마이 탭으로 대체되어 제거됨. 비밀번호 변경만 유지.)
   function openChangePw(){
     openModal({
       title:"비밀번호 변경", message:"새로 사용할 비밀번호를 입력하세요 (6자 이상).",
@@ -821,11 +1120,83 @@
       }
     });
   }
-  $("btnLogout").addEventListener("click", ()=>{
-    openModal({title:"로그아웃", message:"로그아웃 할까요? 다시 들어오려면 이메일과 비밀번호로 로그인해야 해요.",
+  $("myLogout").addEventListener("click", ()=>{
+    openModal({title:"로그아웃", message:"로그아웃 할까요? 다시 들어오려면 전화번호와 비밀번호로 로그인해야 해요.",
       okText:"로그아웃", okClass:"danger", onOk: async ()=>{ await sb.auth.signOut(); location.reload(); }});
   });
   $("blockedOut").addEventListener("click", async ()=>{ await sb.auth.signOut(); location.reload(); });
+
+  // ════════ 마이 탭 ════════
+  const CHURCH_YOUTUBE = "https://youtube.com/@9549191";
+  const KAKAO_URL = "http://pf.kakao.com/_xldxaJX";   // THE KJ STUDIO 카카오톡 채널
+  const CONTACT_EMAIL = "contact@thekjstudio.com";
+  function loadMyTab(){
+    const m = currentMember || {};
+    $("myName").textContent = m.name || "";
+    $("myAdminBadge").style.display = m.is_admin ? "inline-block" : "none";
+    const av = $("myAvatar");
+    av.innerHTML = `<div class="ph">👤</div>`;
+    if(m.photo_url){
+      const img = new Image();
+      img.alt = "";
+      img.onload = ()=>{ av.innerHTML = ""; av.appendChild(img); };
+      img.onerror = ()=>{ /* 실패하면 기본 아이콘 유지 */ };
+      img.src = m.photo_url;
+    }
+  }
+  function openYoram(){
+    // 요람 앱이 있으면 열고, 없으면 앱스토어 검색으로.
+    const term = encodeURIComponent("한일교회 요람");
+    const store = "https://apps.apple.com/kr/search?term=" + term;
+    let moved = false;
+    const t = setTimeout(()=>{ if(!moved) location.href = store; }, 900);
+    window.addEventListener("blur", ()=>{ moved=true; clearTimeout(t); }, {once:true});
+    location.href = "hanilyoram://";
+  }
+  $("myYoram").addEventListener("click", openYoram);
+  $("myYoutube").addEventListener("click", ()=> window.open(CHURCH_YOUTUBE, "_blank"));
+  $("myKakao").addEventListener("click", ()=> window.open(KAKAO_URL, "_blank"));
+  $("myInquiry").addEventListener("click", ()=>{
+    location.href = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent("[HanilPay] 문의");
+  });
+  $("myChangePw").addEventListener("click", openChangePw);
+  $("myCoupon").addEventListener("click", openCouponBox);
+
+  // ════════ 쿠폰함 ════════
+  async function openCouponBox(){
+    openModal({ title:"쿠폰함", message:"불러오는 중…", okText:"닫기", onOk:()=>{}, cancelText:"" });
+    try{
+      const {data, error} = await sb.rpc("my_coupons");
+      if(error) throw error;
+      // my_coupons()는 아직 안 쓴(충전 가능한) 쿠폰만 내려준다 → 그대로 사용
+      const list = data || [];
+      if(!list.length){
+        openModal({ title:"쿠폰함", message:"보관 중인 충전권이 없어요. 충전권 QR을 스캔할 때 '쿠폰함에 저장'을 고르면 여기 담깁니다.", okText:"닫기", onOk:()=>{} });
+        return;
+      }
+      // 가장 최근 쿠폰부터 하나씩 충전할 수 있게 안내(간단 버전)
+      const total = list.reduce((s,c)=>s+(c.amount||0),0);
+      showCouponList(list, total);
+    }catch(e){
+      openModal({ title:"쿠폰함", message:"쿠폰함을 불러올 수 없어요. (" + (e.message||"오류") + ")", okText:"닫기", onOk:()=>{} });
+    }
+  }
+  function showCouponList(list, total){
+    // 모달로는 목록 표현이 제한적이라, 첫 쿠폰 충전 확인을 순차로 제공.
+    const c = list[0];
+    const lbl = c.batch_label ? "["+c.batch_label+"] " : "";
+    openModal({
+      title:"쿠폰함 (" + list.length + "장 · " + won(total) + "원)",
+      message: lbl + won(c.amount||0) + "원 충전권을 지금 충전할까요?",
+      okText:"충전하기", onOk: async ()=>{
+        await redeemCoupon(c.code);
+        const rest = list.slice(1);
+        if(rest.length) showCouponList(rest, rest.reduce((s,x)=>s+(x.amount||0),0));
+      },
+      cancelText: list.length>1 ? "다음 쿠폰" : "닫기",
+      onCancel: ()=>{ const rest=list.slice(1); if(rest.length) showCouponList(rest, rest.reduce((s,x)=>s+(x.amount||0),0)); }
+    });
+  }
 
 // 시작 — 요람 앱에서 넘어온 토큰이 있으면 자동 로그인
   (async ()=>{

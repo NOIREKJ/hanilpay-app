@@ -680,7 +680,8 @@
   // 활성 공지 배너
   async function loadAnnouncement(){
     try{
-      const { data } = await sb.from("announcements").select("title, body, is_active").eq("is_active", true).limit(1);
+      // 페이 공지만 (요람 교회공지와 분리 — announcements.app='pay'). RLS가 활성/기간도 걸러줌.
+      const { data } = await sb.from("announcements").select("title, body, is_active").eq("app", "pay").eq("is_active", true).limit(1);
       const banner = $("announceBanner");
       if(data && data.length){
         $("announceTitle").textContent = "📢 " + (data[0].title || "");

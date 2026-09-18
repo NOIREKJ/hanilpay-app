@@ -278,7 +278,7 @@
     <div class="wheader">
       <div class="wbrand"><div class="b1">HANIL <b style="color:var(--gold)">Pay</b></div><div class="b2"><span id="userName">—</span>님</div></div>
     </div>
-    <div class="balance"><span class="num" id="balanceNum">0</span><span class="won">원</span></div>
+    <div class="balance"><span class="num" id="balanceNum">0</span><span class="won"> 하트</span></div>
     <div class="pending" id="pendingMsg" style="display:none">⏳ 관리자 승인 대기 중 — 승인 후 결제할 수 있어요</div>
     <div id="announceBanner" style="display:none;margin:0 26px 14px;padding:14px 16px;background:rgba(67,209,209,.13);border:1px solid rgba(67,209,209,.35);border-radius:13px">
       <div id="announceTitle" style="font-weight:700;font-size:14px;color:#fff"></div>
@@ -291,8 +291,8 @@
 
     <!-- 이번 달 요약 -->
     <div class="summary">
-      <div class="cell charge"><div class="lb">이번 달 충전</div><div class="vv"><span id="sumCharge">0</span>원</div></div>
-      <div class="cell pay"><div class="lb">이번 달 사용</div><div class="vv"><span id="sumPay">0</span>원</div></div>
+      <div class="cell charge"><div class="lb">이번 달 충전</div><div class="vv"><span id="sumCharge">0</span> 하트</div></div>
+      <div class="cell pay"><div class="lb">이번 달 사용</div><div class="vv"><span id="sumPay">0</span> 하트</div></div>
     </div>
 
     <!-- 자주 가는 곳 -->
@@ -349,7 +349,7 @@
   <div class="success" id="paySuccessBox">
     <div class="ring" id="successRing"><div class="ck">✓</div></div>
     <div class="label" id="successLabel">결제 완료</div>
-    <div class="amt" id="successAmt">0 원</div>
+    <div class="amt" id="successAmt">0 하트</div>
     <div class="where" id="successWhere"></div>
     <div class="hint">화면을 탭하면 닫혀요</div>
   </div>
@@ -714,7 +714,7 @@
       const date = (t.created_at||"").slice(0,10);
       return `<div class="item"><div class="ic ${iconCls}">${icon}</div>
         <div class="info"><div class="name">${name}</div><div class="date">${date}</div></div>
-        <div class="amt ${isPlus?'in':'out'}">${isPlus?'+':''}${won(t.amount)}원</div></div>`;
+        <div class="amt ${isPlus?'in':'out'}">${isPlus?'+':''}${won(t.amount)} 하트</div></div>`;
     }).join("");
   }
   function iconFor(c){return{"카페":"☕","식당":"🍴","학원":"📖","미용실":"✂","서점":"📚","마트":"🛒","병원":"✚"}[c]||"🏪";}
@@ -805,12 +805,12 @@
     show("wallet");
     openModal({
       title:`${payTarget.name} 결제`, message:"결제할 금액을 입력하세요.",
-      inputPlaceholder:"결제 금액(원)", okText:"다음",
+      inputPlaceholder:"결제 금액(하트)", okText:"다음",
       onOk:(v)=>{
         const amt = parseInt(v);
         if(!amt||amt<=0){ openModal({title:"오류",message:"올바른 금액을 입력해주세요.",okText:"확인",onOk:()=>{}}); return; }
         openModal({
-          title:"결제 확인", message:`${payTarget.name}에서 ${won(amt)}원을 결제할까요?`,
+          title:"결제 확인", message:`${payTarget.name}에서 ${won(amt)} 하트를 결제할까요?`,
           okText:"결제하기", onOk:()=>doPay(amt)
         });
       }
@@ -838,7 +838,7 @@
 
   function showPaySuccess(amount, where){
     $("successLabel").textContent = "결제 완료";
-    $("successAmt").textContent = won(amount) + " 원";
+    $("successAmt").textContent = won(amount) + " 하트";
     $("successWhere").textContent = where;
     $("successRing").classList.remove("charge");
     show("paySuccess");
@@ -1061,7 +1061,7 @@
         const time = timeText(r.created_at);
         return `<div class="item"><div class="ic ${cls}">${icon}</div>
           <div class="info"><div class="name">${name}</div><div class="date">${time}</div></div>
-          <div class="amt ${isPlus?'in':'out'}">${isPlus?'+':''}${won(r.amount)}원</div></div>`;
+          <div class="amt ${isPlus?'in':'out'}">${isPlus?'+':''}${won(r.amount)} 하트</div></div>`;
       }).join("");
       return `<div class="day-group"><div class="day-label">${dayLabel(d)}</div><div style="display:flex;flex-direction:column;gap:10px">${items}</div></div>`;
     }).join("");
@@ -1096,7 +1096,7 @@
 
   function showChargeSuccess(amount){
     $("successLabel").textContent = "충전 완료";
-    $("successAmt").textContent = "+" + won(amount) + " 원";
+    $("successAmt").textContent = "+" + won(amount) + " 하트";
     $("successWhere").textContent = "";
     $("successRing").classList.add("charge");
     show("paySuccess");
@@ -1187,8 +1187,8 @@
     const c = list[0];
     const lbl = c.batch_label ? "["+c.batch_label+"] " : "";
     openModal({
-      title:"쿠폰함 (" + list.length + "장 · " + won(total) + "원)",
-      message: lbl + won(c.amount||0) + "원 충전권을 지금 충전할까요?",
+      title:"쿠폰함 (" + list.length + "장 · " + won(total) + " 하트)",
+      message: lbl + won(c.amount||0) + " 하트 충전권을 지금 충전할까요?",
       okText:"충전하기", onOk: async ()=>{
         await redeemCoupon(c.code);
         const rest = list.slice(1);
